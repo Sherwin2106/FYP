@@ -1,0 +1,57 @@
+# Explainable Social VCR - Phase I configuration
+# Any key can also be overridden on the command line, e.g.
+#   python -m svcr run --image img.jpg --set vlm.model_id=HuggingFaceTB/SmolVLM-500M-Instruct
+
+preprocess:                      # Module 1 - Input & Preprocessing (OpenCV)
+  target_longest_side: 1152
+  resize_mode: fit               # fit | center_crop | none
+  upscale_small: false
+  enhance_low_light: true
+  low_light_threshold: 60.0
+  denoise: false
+  blur_threshold: 60.0
+  sample_interval_s: 2.0         # live/video: analyse at most one frame every N seconds
+  scene_change_threshold: 0.25
+  skip_blurry_frames: true
+
+vlm:                             # Module 2 - Small Vision-Language Model
+  model_id: HuggingFaceTB/SmolVLM-Instruct   # swap for a fine-tuned checkpoint path later
+  device: auto                   # auto | cuda | mps | cpu
+  dtype: auto
+  local_files_only: false
+  image_longest_edge: 1152
+  max_new_tokens_description: 160
+  max_new_tokens_short: 32
+  max_new_tokens_explanation: 120
+  repetition_penalty: 1.1
+  debias_permutations: 2
+  fast_mode: false
+
+conceptnet:                      # Module 3 - ConceptNet Enrichment
+  backend: auto                  # auto | local | api | offline
+  local_db: data/conceptnet/conceptnet_en.sqlite
+  api_url: https://api.conceptnet.io
+  api_cache_db: data/conceptnet/api_cache.sqlite
+  timeout_s: 10.0
+  max_edges_per_term: 400
+  min_edge_weight: 1.0
+  max_terms: 20
+  max_facts_per_term: 6
+  max_facts_total: 40
+  two_hop_weight: 0.6
+
+reasoning:                       # Module 4 - Social Interaction Reasoning
+  taxonomy_path: configs/taxonomy.yaml
+  shortlist_size: 8
+  w_vlm: 1.0
+  w_commonsense: 0.5
+  w_draft: 1.0
+  commonsense_temperature: 0.2
+  ambiguity_margin: 0.15
+  max_context_facts: 10
+  include_caption_in_context: true
+  condition_on_previous: true
+  generate_explanation: true
+
+output_dir: outputs
+log_level: INFO

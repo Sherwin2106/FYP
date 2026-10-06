@@ -1,0 +1,22 @@
+# Core deep learning / VLM
+torch>=2.3
+torchvision>=0.18
+transformers>=4.46
+accelerate>=0.33
+huggingface_hub>=0.24
+num2words>=0.5.13        # required by some SmolVLM processors
+peft>=0.13                # LoRA adapter (fine-tuned SmolVLM) loading
+
+# Module 1 - input & preprocessing
+opencv-python>=4.9
+pillow>=10.0
+numpy>=1.26
+
+# Module 3 - ConceptNet / NLP
+requests>=2.31
+spacy>=3.7               # then: python -m spacy download en_core_web_sm
+
+# Utilities
+pyyaml>=6.0
+tqdm>=4.66
+pytest>=8.0

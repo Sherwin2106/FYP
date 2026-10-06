@@ -1,0 +1,10 @@
+# SmolVLM-Instruct + the LoRA adapter trained on VCR by finetune/train_vcr_lora.py.
+# Only the differences from configs/default.yaml are listed; everything else is inherited.
+#
+#   python -m svcr run --image photo.jpg --config configs/finetuned.yaml
+#   SVCR_CONFIG=configs/finetuned.yaml uvicorn backend.main:app --port 8000
+
+vlm:
+  model_id: HuggingFaceTB/SmolVLM-Instruct
+  adapter_path: models/smolvlm-vcr-lora      # the "adapter/" folder from the training run
+  image_longest_edge: 768                    # the resolution the adapter was trained at

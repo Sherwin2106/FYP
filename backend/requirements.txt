@@ -1,0 +1,6 @@
+# Additional dependencies for the React UI's backend, on top of the project's
+# main requirements.txt (torch, transformers, opencv, etc. are still required —
+# backend/main.py imports the svcr package directly).
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9

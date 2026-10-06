@@ -1,0 +1,263 @@
+# Social-interaction label space used by Module 4.
+#   description : text shown to the VLM as a multiple-choice option
+#   anchors     : ConceptNet concepts that characterise the label (used by Module 3)
+#   keywords    : extra words used to match the VLM's free-form draft to the label
+# Labels can be added/edited freely; no code change is required.
+
+activity:
+  - id: greeting
+    description: greeting each other (handshake, wave or saying hello)
+    anchors: [greeting, greet, handshake, shake_hands, wave, hello, meet, introduction]
+    keywords: [greet, greeting, handshake, shake, hand, wave, hello, meet, introduce, welcome]
+  - id: farewell
+    description: saying goodbye or parting ways
+    anchors: [goodbye, farewell, leave, depart, parting]
+    keywords: [goodbye, bye, farewell, leave, depart, part, see off]
+  - id: hugging
+    description: hugging or embracing
+    anchors: [hug, embrace, cuddle]
+    keywords: [hug, hugging, embrace, cuddle, arms around]
+  - id: conversation
+    description: having a friendly conversation or chatting
+    anchors: [conversation, talk, chat, discuss, speak, gossip]
+    keywords: [talk, talking, chat, conversation, discuss, speak, converse, listen]
+  - id: arguing
+    description: arguing or having a heated disagreement
+    anchors: [argue, argument, quarrel, disagree, shout, yell, dispute]
+    keywords: [argue, argument, quarrel, disagree, shout, yell, angry, dispute, confront]
+  - id: fighting
+    description: fighting or a physical confrontation
+    anchors: [fight, punch, hit, attack, wrestle, violence, brawl]
+    keywords: [fight, punch, hit, attack, wrestle, kick, violence, brawl, struggle]
+  - id: threatening
+    description: threatening or intimidating someone
+    anchors: [threaten, threat, intimidate, weapon, gun, knife, danger]
+    keywords: [threaten, intimidate, weapon, gun, knife, point, hostage, menace]
+  - id: eating_together
+    description: eating or drinking together / sharing a meal
+    anchors: [eat, meal, dinner, lunch, breakfast, drink, restaurant, food, dine]
+    keywords: [eat, eating, meal, dinner, lunch, breakfast, drink, restaurant, food, dine, coffee, table]
+  - id: celebrating
+    description: celebrating (party, toast, birthday or cheering)
+    anchors: [celebrate, celebration, party, toast, birthday, cheer, wedding]
+    keywords: [celebrate, party, toast, birthday, cheer, wedding, champagne, cake, festive]
+  - id: playing_sports
+    description: playing a sport or physical game together
+    anchors: [sport, play_sports, ball, soccer, basketball, tennis, match, exercise]
+    keywords: [sport, ball, soccer, football, basketball, tennis, match, team, game, exercise, run]
+  - id: playing_games
+    description: playing a board, card or video game
+    anchors: [game, play_game, cards, chess, video_game, board_game]
+    keywords: [game, cards, chess, board game, video game, play, dice, puzzle]
+  - id: dancing
+    description: dancing together
+    anchors: [dance, dancing, ballroom]
+    keywords: [dance, dancing, ballroom, music, twirl]
+  - id: romantic
+    description: a romantic moment (kissing, holding hands, date)
+    anchors: [kiss, romance, date, love, hold_hands, flirt]
+    keywords: [kiss, romantic, romance, date, love, hold hands, flirt, couple]
+  - id: comforting
+    description: comforting or consoling someone who is upset
+    anchors: [comfort, console, cry, sadness, sympathy, grief]
+    keywords: [comfort, console, cry, crying, sad, upset, sympathy, grief, tears, support]
+  - id: helping
+    description: helping or assisting someone with something
+    anchors: [help, assist, aid, support, rescue, carry]
+    keywords: [help, helping, assist, aid, support, rescue, carry, lift, guide]
+  - id: caregiving
+    description: taking care of a child, elderly or sick person
+    anchors: [care, babysit, feed, nurse, parent, baby]
+    keywords: [care, baby, child, feed, babysit, nurse, look after, elderly]
+  - id: teaching
+    description: teaching, instructing or explaining something
+    anchors: [teach, learn, lesson, class, lecture, explain, instruct, school]
+    keywords: [teach, learn, lesson, class, classroom, lecture, explain, instruct, student, school, homework]
+  - id: working_together
+    description: working or collaborating on a task
+    anchors: [work, collaborate, cooperate, meeting, office, job, business]
+    keywords: [work, working, collaborate, cooperate, meeting, office, job, business, project, computer]
+  - id: transaction
+    description: buying, selling or providing a service
+    anchors: [buy, sell, pay, shop, money, customer, purchase, serve]
+    keywords: [buy, sell, pay, shop, shopping, money, customer, cashier, store, purchase, order, serve, waiter]
+  - id: medical
+    description: a medical examination or treatment
+    anchors: [doctor, patient, hospital, medicine, treatment, examine]
+    keywords: [doctor, patient, hospital, medical, nurse, treatment, examine, injury, clinic]
+  - id: law_enforcement
+    description: police or security questioning, arresting or checking someone
+    anchors: [police, arrest, officer, interrogate, crime, handcuff]
+    keywords: [police, arrest, officer, cop, interrogate, crime, handcuff, security, guard, uniform]
+  - id: performing
+    description: performing, presenting or giving a speech to an audience
+    anchors: [perform, performance, speech, audience, stage, concert, presentation, sing]
+    keywords: [perform, speech, audience, stage, concert, presentation, sing, microphone, applause]
+  - id: watching_together
+    description: watching something together (a show, game or event)
+    anchors: [watch, television, movie, spectator, show]
+    keywords: [watch, watching, television, tv, movie, spectator, screen, show]
+  - id: photographing
+    description: taking photos or posing for a picture
+    anchors: [photograph, camera, pose, picture, selfie]
+    keywords: [photo, photograph, camera, pose, picture, selfie, smile for]
+  - id: walking_together
+    description: walking or travelling together
+    anchors: [walk, stroll, travel, journey, hike]
+    keywords: [walk, walking, stroll, travel, hike, street, sidewalk, journey]
+  - id: no_interaction
+    description: no clear interaction (the person is alone or people are not engaging)
+    anchors: [alone, solitude, ignore, individual]
+    keywords: [alone, ignore, nobody, solitary, by himself, by herself, independent, single]
+
+relationship:
+  - id: friends
+    description: friends
+    anchors: [friend, friendship, buddy, companion]
+    keywords: [friend, friends, buddy, pal, companion, friendly]
+  - id: romantic_partners
+    description: a romantic couple (partners or spouses)
+    anchors: [couple, lover, boyfriend, girlfriend, husband, wife, spouse, romance]
+    keywords: [couple, lover, boyfriend, girlfriend, husband, wife, spouse, romantic, partner, married, dating]
+  - id: parent_child
+    description: parent and child
+    anchors: [parent, child, mother, father, son, daughter]
+    keywords: [parent, child, mother, father, mom, dad, son, daughter, kid]
+  - id: family_relatives
+    description: family members or relatives (siblings, grandparents)
+    anchors: [family, sibling, brother, sister, relative, grandparent]
+    keywords: [family, sibling, brother, sister, relative, grandparent, grandmother, grandfather, cousin]
+  - id: colleagues
+    description: colleagues or business associates
+    anchors: [colleague, coworker, employee, boss, business, office]
+    keywords: [colleague, coworker, co-worker, employee, boss, business, office, professional, associate, team]
+  - id: teacher_student
+    description: teacher (or coach) and student
+    anchors: [teacher, student, pupil, school, coach, mentor]
+    keywords: [teacher, student, pupil, school, coach, mentor, instructor, tutor]
+  - id: customer_service
+    description: customer and service provider (waiter, clerk, seller)
+    anchors: [customer, waiter, cashier, clerk, client, seller, shopkeeper]
+    keywords: [customer, waiter, waitress, cashier, clerk, client, seller, vendor, shopkeeper, bartender, service]
+  - id: doctor_patient
+    description: doctor (or nurse) and patient
+    anchors: [doctor, patient, nurse, hospital]
+    keywords: [doctor, patient, nurse, physician, medical]
+  - id: teammates
+    description: teammates or members of the same group
+    anchors: [teammate, team, player, crew]
+    keywords: [teammate, team, player, crew, squad, band]
+  - id: opponents
+    description: opponents, rivals or enemies
+    anchors: [opponent, rival, enemy, competitor, adversary]
+    keywords: [opponent, rival, enemy, competitor, adversary, hostile]
+  - id: authority_civilian
+    description: an authority figure (police, soldier, guard) and a civilian
+    anchors: [police, officer, soldier, guard, authority, arrest]
+    keywords: [police, officer, cop, soldier, guard, authority, suspect, detective]
+  - id: performer_audience
+    description: performer or speaker and audience
+    anchors: [performer, audience, fan, spectator, speaker]
+    keywords: [performer, audience, fan, spectator, speaker, crowd, singer]
+  - id: host_guest
+    description: host and guest or visitor
+    anchors: [host, guest, visitor, hospitality]
+    keywords: [host, guest, visitor, visit, welcome, hospitality]
+  - id: strangers
+    description: strangers or acquaintances meeting
+    anchors: [stranger, acquaintance, passerby]
+    keywords: [stranger, strangers, acquaintance, passerby, unknown, first time]
+  - id: none_single
+    description: no relationship (only one person is present)
+    anchors: [alone, individual, solitude]
+    keywords: [alone, single, one person, individual, none]
+
+intention:
+  - id: greet_acknowledge
+    description: to greet or acknowledge each other
+    anchors: [greeting, greet, acknowledge, meet, welcome]
+    keywords: [greet, acknowledge, welcome, meet, introduce, hello]
+  - id: say_goodbye
+    description: to say goodbye before parting
+    anchors: [goodbye, farewell, leave]
+    keywords: [goodbye, farewell, leave, part, depart]
+  - id: express_affection
+    description: to express love or affection
+    anchors: [love, affection, romance, care]
+    keywords: [love, affection, romance, care, fond, intimate]
+  - id: comfort_support
+    description: to comfort, console or emotionally support someone
+    anchors: [comfort, console, support, sympathy]
+    keywords: [comfort, console, support, sympathy, reassure, cheer up, calm]
+  - id: help_assist
+    description: to help someone accomplish something
+    anchors: [help, assist, aid, rescue]
+    keywords: [help, assist, aid, rescue, support, fix]
+  - id: share_information
+    description: to share information, news or ideas
+    anchors: [communicate, inform, tell, discuss, conversation, news]
+    keywords: [share, inform, tell, discuss, communicate, news, ask, explain, information, conversation]
+  - id: persuade_convince
+    description: to persuade or convince someone
+    anchors: [persuade, convince, negotiate, argue]
+    keywords: [persuade, convince, negotiate, argue, deal, bargain]
+  - id: teach_learn
+    description: to teach or to learn something
+    anchors: [teach, learn, education, knowledge]
+    keywords: [teach, learn, education, knowledge, study, lesson, instruct]
+  - id: celebrate_have_fun
+    description: to celebrate or have fun together
+    anchors: [celebrate, fun, enjoy, party, happiness]
+    keywords: [celebrate, fun, enjoy, party, happy, entertain, laugh, relax]
+  - id: socialize_bond
+    description: to socialize, relax and spend time together
+    anchors: [socialize, relax, friendship, company]
+    keywords: [socialize, relax, bond, spend time, hang out, company, catch up]
+  - id: cooperate_on_task
+    description: to cooperate in order to complete a task or job
+    anchors: [cooperate, work, collaborate, accomplish, task]
+    keywords: [cooperate, work, collaborate, accomplish, task, job, project, finish]
+  - id: compete_win
+    description: to compete and win
+    anchors: [compete, win, competition, victory]
+    keywords: [compete, win, competition, victory, beat, score]
+  - id: express_anger_confront
+    description: to express anger or confront someone
+    anchors: [anger, confront, argue, complain]
+    keywords: [anger, angry, confront, argue, complain, blame, frustrated]
+  - id: intimidate_harm
+    description: to intimidate, threaten or harm someone
+    anchors: [threaten, intimidate, harm, attack, hurt]
+    keywords: [threaten, intimidate, harm, attack, hurt, scare, kill, rob]
+  - id: resolve_conflict
+    description: to resolve a conflict or apologise
+    anchors: [apologize, reconcile, forgive, apology]
+    keywords: [apologize, apologise, reconcile, forgive, sorry, make up, resolve]
+  - id: buy_sell_service
+    description: to buy, sell or obtain a service
+    anchors: [buy, sell, purchase, pay, service]
+    keywords: [buy, sell, purchase, pay, order, service, shop]
+  - id: entertain_perform
+    description: to entertain or perform for others
+    anchors: [entertain, perform, amuse, show]
+    keywords: [entertain, perform, amuse, show, sing, play music]
+  - id: eat_nourish
+    description: to eat, drink or share food
+    anchors: [eat, hunger, food, drink, nourish]
+    keywords: [eat, hungry, food, drink, meal, nourish, feed]
+  - id: care_protect
+    description: to take care of or protect someone
+    anchors: [protect, care, safety, guard]
+    keywords: [protect, care, safety, safe, guard, look after, watch over]
+  - id: enforce_law
+    description: to enforce the law, question or detain someone
+    anchors: [arrest, law, police, investigate, interrogate]
+    keywords: [arrest, law, police, investigate, interrogate, detain, question]
+  - id: capture_memory
+    description: to capture a memory by taking a photo
+    anchors: [photograph, memory, picture, remember]
+    keywords: [photo, photograph, memory, picture, remember, selfie]
+  - id: exercise_play
+    description: to exercise or play a game
+    anchors: [exercise, play, game, sport, fitness]
+    keywords: [exercise, play, game, sport, fitness, training]

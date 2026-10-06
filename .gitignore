@@ -1,0 +1,24 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+outputs/*
+!outputs/.gitkeep
+data/conceptnet/*.sqlite
+data/conceptnet/*.gz
+data/conceptnet/*.part
+data/conceptnet/*.building
+.DS_Store
+samples/*
+!samples/.gitkeep
+
+# frontend (React UI)
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+
+# fine-tuning
+models/
+finetune/runs/
+finetune/kaggle/kernel-metadata.json

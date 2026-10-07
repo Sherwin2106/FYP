@@ -37,10 +37,9 @@ LETTERS = string.ascii_uppercase
 
 PROMPTS = {
     "describe": (
-        "Describe this image in one paragraph of three to five sentences. Focus on the people: how "
-        "many there are, what they are doing, how they are interacting with each other, their "
-        "gestures and facial expressions, the objects they hold or use, and the setting. Do not use "
-        "lists or headings."
+        "Describe this image in detail. Focus on the people: how many there are, where they are, "
+        "their body posture, gestures and facial expressions, what they are doing, how they are "
+        "interacting with each other, the objects they hold or use, and the setting."
     ),
     "count": "How many people are visible in this image? Answer with a single number.",
     "objects": (
@@ -86,7 +85,7 @@ _META_SENTENCE = re.compile(r"^(given the description|let'?s|here is|in summary|
                             re.IGNORECASE)
 
 
-def complete_sentences(text: str, max_sentences: int = 5) -> str:
+def complete_sentences(text: str, max_sentences: int | None = None) -> str:
     """Plain-prose description: no list formatting, no meta remarks, no unfinished last sentence."""
     text = re.sub(r"\*\*|^#+\s*", "", text, flags=re.M)
     text = re.sub(r"^\s*(?:\d+[.)]|[-*•])\s+", "", text, flags=re.M)
@@ -98,7 +97,7 @@ def complete_sentences(text: str, max_sentences: int = 5) -> str:
             sentences.pop()
         else:
             sentences[-1] += "…"
-    return " ".join(sentences[:max_sentences])
+    return " ".join(sentences if max_sentences is None else sentences[:max_sentences])
 
 
 def unique_people(items: list[str]) -> list[str]:
@@ -320,21 +319,23 @@ class SmolVLMEngine:
     def understand(self, frame) -> VisualConcepts:
         image = self._image(frame)
         g = lambda key, n=None: self.generate(image, PROMPTS[key], n or self.cfg.max_new_tokens_short)
-        caption = complete_sentences(
-            self.generate(image, PROMPTS["describe"], self.cfg.max_new_tokens_description))
+        caption = self.generate(image, PROMPTS["describe"], self.cfg.max_new_tokens_description)
         raw = {"caption": caption}
         terms = extract_terms(caption)
 
         if self.cfg.fast_mode:
             count = parse_count(caption)
             objects, actions, gestures = terms["nouns"], terms["verbs"], terms["adjectives"]
+            direct_objects, direct_actions = objects, actions
             setting, people = "", terms["people"]
         else:
             for key in ("count", "objects", "actions", "gestures", "setting", "people"):
                 raw[key] = g(key, 8 if key == "count" else None)
             count = parse_count(raw["count"])
-            objects = split_list(raw["objects"])
-            actions = split_list(raw["actions"])
+            direct_objects = split_list(raw["objects"])
+            direct_actions = split_list(raw["actions"])
+            objects = direct_objects + terms["nouns"]
+            actions = direct_actions + terms["verbs"]
             gestures = split_list(raw["gestures"])
             setting = raw["setting"].strip().rstrip(".")
             people = split_list(raw["people"]) + terms["people"]
@@ -350,13 +351,18 @@ class SmolVLMEngine:
         return VisualConcepts(
             caption=caption,
             people_count=count,
-            people=unique_people(dedupe(people))[:8],
+            people=dedupe(people)[:8],
             objects=[o for o in dedupe(objects) if o not in PERSON_NOUNS][:15],
             actions=dedupe(actions)[:12],
             gestures=dedupe(gestures)[:8],
             setting=setting,
             spatial_relations=extract_spatial_relations(caption),
             raw_answers=raw,
+            # display-only copies (the reasoning above uses the full versions)
+            display_caption=complete_sentences(caption),
+            display_people=unique_people(dedupe(people))[:8],
+            display_objects=[o for o in dedupe(direct_objects) if o not in PERSON_NOUNS][:15],
+            display_actions=dedupe(direct_actions)[:12],
         )
 
     # ------------------------------------------------------------------ Module 2B

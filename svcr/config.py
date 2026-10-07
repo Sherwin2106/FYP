@@ -53,7 +53,7 @@ class VLMConfig:
     local_files_only: bool = False
     # Longest edge the SmolVLM processor resizes to before tiling (None = model default).
     image_longest_edge: int | None = 1152
-    max_new_tokens_description: int = 220
+    max_new_tokens_description: int = 320
     max_new_tokens_short: int = 32
     max_new_tokens_explanation: int = 120
     repetition_penalty: float = 1.1

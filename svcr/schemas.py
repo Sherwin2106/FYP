@@ -66,6 +66,12 @@ class VisualConcepts:
     setting: str = ""
     spatial_relations: list[str] = field(default_factory=list)
     raw_answers: dict[str, str] = field(default_factory=dict)
+    # Tidied copies for the UI only (complete sentences, model's direct answers);
+    # Modules 3-4 always use the full fields above.
+    display_caption: str = ""
+    display_people: list[str] = field(default_factory=list)
+    display_objects: list[str] = field(default_factory=list)
+    display_actions: list[str] = field(default_factory=list)
 
 
 @dataclass

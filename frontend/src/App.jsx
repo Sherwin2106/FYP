@@ -277,10 +277,6 @@ export default function App() {
         </div>
       </main>
 
-      <footer className="site-footer">
-        <span>Explainable Visual Commonsense Reasoning for Social Interactions</span>
-        <span>Department of Computer Science and Engineering, SSN College of Engineering</span>
-      </footer>
     </div>
   );
 }

@@ -13,12 +13,14 @@ function capitalize(text) {
 export default function VisualConceptsPanel({ visual }) {
   if (!visual) return null;
   const rows = ROWS.map(([key, label]) => {
-    const value = visual[key];
+    // Prefer the tidied display copies (full versions are used by the reasoning).
+    const shown = visual[`display_${key}`];
+    const value = Array.isArray(shown) && shown.length ? shown : visual[key];
     const items = Array.isArray(value) ? value : value ? [value] : [];
     return [label, items.map(capitalize).join(', ')];
   }).filter(([, text]) => text);
   // The model sometimes formats its description with markdown; show it as plain prose.
-  const caption = (visual.caption || '').replace(/\*\*/g, '').replace(/^\s*[-*]\s+/gm, '').trim();
+  const caption = (visual.display_caption || visual.caption || '').replace(/\*\*/g, '').replace(/^\s*[-*]\s+/gm, '').trim();
 
   return (
     <section className="card card-body">

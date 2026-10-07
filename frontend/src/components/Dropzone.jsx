@@ -14,7 +14,7 @@ export default function Dropzone({ previewUrl, onFile, disabled }) {
     if (ACCEPTED.length && !ACCEPTED.includes(file.type) && !/\.(jpe?g|png|webp|bmp)$/i.test(file.name || '')) {
       return 'Please choose a JPG, PNG, WEBP or BMP image.';
     }
-    if (file.size > MAX_BYTES) return 'That image is larger than 15 MB — please pick a smaller one.';
+    if (file.size > MAX_BYTES) return 'The image is larger than 15 MB. Please choose a smaller file.';
     return null;
   }
 
@@ -47,13 +47,13 @@ export default function Dropzone({ previewUrl, onFile, disabled }) {
         {previewUrl ? (
           <>
             <img className="dropzone-preview" src={previewUrl} alt="Selected input" />
-            <span className="dropzone-change">change image</span>
+            <span className="dropzone-change">Change image</span>
           </>
         ) : (
           <div className="dropzone-placeholder">
             <ImageIcon />
-            <p className="dropzone-placeholder-title">Drop an image here</p>
-            <p className="dropzone-placeholder-sub">or click to browse · JPG, PNG, WEBP up to 15 MB</p>
+            <p className="dropzone-placeholder-title">Drag an image here or click to browse</p>
+            <p className="dropzone-placeholder-sub">JPG, PNG or WEBP, up to 15 MB</p>
           </div>
         )}
         <input

@@ -20,6 +20,7 @@ fine-tuned checkpoint without code changes.
 from __future__ import annotations
 
 import logging
+import re
 import string
 from typing import Sequence
 
@@ -36,9 +37,10 @@ LETTERS = string.ascii_uppercase
 
 PROMPTS = {
     "describe": (
-        "Describe this image in detail. Focus on the people: how many there are, where they are, "
-        "their body posture, gestures and facial expressions, what they are doing, how they are "
-        "interacting with each other, the objects they hold or use, and the setting."
+        "Describe this image in one paragraph of three to five sentences. Focus on the people: how "
+        "many there are, what they are doing, how they are interacting with each other, their "
+        "gestures and facial expressions, the objects they hold or use, and the setting. Do not use "
+        "lists or headings."
     ),
     "count": "How many people are visible in this image? Answer with a single number.",
     "objects": (
@@ -77,6 +79,37 @@ PROMPTS = {
     ),
     "question": "{question} Answer briefly, then give the visual reason.",
 }
+
+
+# Sentences that talk about the description itself rather than the image.
+_META_SENTENCE = re.compile(r"^(given the description|let'?s|here is|in summary|to summarize|overall,? the image)",
+                            re.IGNORECASE)
+
+
+def complete_sentences(text: str, max_sentences: int = 5) -> str:
+    """Plain-prose description: no list formatting, no meta remarks, no unfinished last sentence."""
+    text = re.sub(r"\*\*|^#+\s*", "", text, flags=re.M)
+    text = re.sub(r"^\s*(?:\d+[.)]|[-*•])\s+", "", text, flags=re.M)
+    text = re.sub(r"\s*\n+\s*", " ", text).strip()
+    text = re.sub(r"\s*\d+[.)]\s*(?:[\w' -]{0,40}:)?\s*$", "", text)   # dangling "2. Starfire:"
+    sentences = [s for s in re.split(r"(?<=[.!?])\s+", text) if s and not _META_SENTENCE.match(s)]
+    if sentences and sentences[-1][-1] not in ".!?\"'":                # cut off by the length cap
+        if len(sentences) > 1:
+            sentences.pop()
+        else:
+            sentences[-1] += "…"
+    return " ".join(sentences[:max_sentences])
+
+
+def unique_people(items: list[str]) -> list[str]:
+    """'children', 'ten children', 'child' -> 'children' (one entry per base noun)."""
+    from .text import lemmatize
+    seen: dict[str, str] = {}
+    for item in items:
+        words = item.split()
+        if words:
+            seen.setdefault(lemmatize(words[-1]), item)
+    return list(seen.values())
 
 
 def resolve_device(name: str = "auto") -> str:
@@ -287,7 +320,8 @@ class SmolVLMEngine:
     def understand(self, frame) -> VisualConcepts:
         image = self._image(frame)
         g = lambda key, n=None: self.generate(image, PROMPTS[key], n or self.cfg.max_new_tokens_short)
-        caption = self.generate(image, PROMPTS["describe"], self.cfg.max_new_tokens_description)
+        caption = complete_sentences(
+            self.generate(image, PROMPTS["describe"], self.cfg.max_new_tokens_description))
         raw = {"caption": caption}
         terms = extract_terms(caption)
 
@@ -299,8 +333,8 @@ class SmolVLMEngine:
             for key in ("count", "objects", "actions", "gestures", "setting", "people"):
                 raw[key] = g(key, 8 if key == "count" else None)
             count = parse_count(raw["count"])
-            objects = split_list(raw["objects"]) + terms["nouns"]
-            actions = split_list(raw["actions"]) + terms["verbs"]
+            objects = split_list(raw["objects"])
+            actions = split_list(raw["actions"])
             gestures = split_list(raw["gestures"])
             setting = raw["setting"].strip().rstrip(".")
             people = split_list(raw["people"]) + terms["people"]
@@ -316,7 +350,7 @@ class SmolVLMEngine:
         return VisualConcepts(
             caption=caption,
             people_count=count,
-            people=dedupe(people)[:8],
+            people=unique_people(dedupe(people))[:8],
             objects=[o for o in dedupe(objects) if o not in PERSON_NOUNS][:15],
             actions=dedupe(actions)[:12],
             gestures=dedupe(gestures)[:8],

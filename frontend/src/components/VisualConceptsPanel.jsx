@@ -1,38 +1,41 @@
-const GROUPS = [
+const ROWS = [
+  ['setting', 'Setting'],
   ['people', 'People'],
   ['actions', 'Actions'],
-  ['gestures', 'Gestures & expressions'],
+  ['gestures', 'Expressions and gestures'],
   ['objects', 'Objects'],
 ];
 
+function capitalize(text) {
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+}
+
 export default function VisualConceptsPanel({ visual }) {
   if (!visual) return null;
-  const groups = GROUPS.map(([key, label]) => [label, visual[key] || []]).filter(([, items]) => items.length > 0);
+  const rows = ROWS.map(([key, label]) => {
+    const value = visual[key];
+    const items = Array.isArray(value) ? value : value ? [value] : [];
+    return [label, items.map(capitalize).join(', ')];
+  }).filter(([, text]) => text);
+  // The model sometimes formats its description with markdown; show it as plain prose.
+  const caption = (visual.caption || '').replace(/\*\*/g, '').replace(/^\s*[-*]\s+/gm, '').trim();
 
   return (
-    <section className="card concepts-panel">
-      <p className="eyebrow">What SmolVLM saw</p>
-      {visual.caption && <p className="concept-caption">{visual.caption}</p>}
-      {visual.setting && (
-        <div className="concept-group">
-          <p className="concept-group-label">Setting</p>
-          <div className="concept-chips">
-            <span className="concept-chip">{visual.setting}</span>
-          </div>
-        </div>
-      )}
-      {groups.map(([label, items]) => (
-        <div className="concept-group" key={label}>
-          <p className="concept-group-label">{label}</p>
-          <div className="concept-chips">
-            {items.map((item, i) => (
-              <span className="concept-chip" key={i}>
-                {item}
-              </span>
+    <section className="card card-body">
+      <h2 className="section-title">Scene description</h2>
+      {caption && <p className="scene-caption">{caption}</p>}
+      {rows.length > 0 && (
+        <table className="concept-table">
+          <tbody>
+            {rows.map(([label, text]) => (
+              <tr key={label}>
+                <th scope="row">{label}</th>
+                <td>{text}</td>
+              </tr>
             ))}
-          </div>
-        </div>
-      ))}
+          </tbody>
+        </table>
+      )}
     </section>
   );
 }

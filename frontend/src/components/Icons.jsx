@@ -104,3 +104,12 @@ export function ClockIcon(props) {
     </svg>
   );
 }
+
+export function VideoIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="6" width="13" height="12" rx="1.5" />
+      <path d="M16 10.5l5-3v9l-5-3z" />
+    </svg>
+  );
+}

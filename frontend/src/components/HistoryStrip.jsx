@@ -1,8 +1,10 @@
 export default function HistoryStrip({ items, activeId, onSelect }) {
   if (!items.length) return null;
   return (
-    <div className="card history-strip">
-      <p className="eyebrow">This session</p>
+    <div className="card card-body">
+      <h2 className="section-title" style={{ fontSize: 15.5 }}>
+        Recent analyses
+      </h2>
       <div className="history-scroll scrollbar-thin">
         {items.map((item) => (
           <button

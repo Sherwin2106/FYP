@@ -3,7 +3,7 @@ import Header from './components/Header';
 import SourcePanel from './components/SourcePanel';
 import HistoryStrip from './components/HistoryStrip';
 import ResultsPanel from './components/ResultsPanel';
-import { fetchHealth, startAnalysis, pollJob } from './lib/api';
+import { fetchHealth, startAnalysis, startVideoAnalysis, pollJob } from './lib/api';
 
 const HISTORY_KEY = 'svcr_history_v1';
 const MAX_HISTORY = 8;
@@ -40,6 +40,10 @@ function makeThumbnail(file) {
 }
 
 function summarize(result) {
+  if (result?.kind === 'video') {
+    const a = result.summary?.activity;
+    return a ? `Video · ${a.label}` : 'Video analysis';
+  }
   const p = result?.prediction;
   return p ? `${p.activity.label} · ${p.relationship.label}` : 'Analysis';
 }
@@ -49,6 +53,10 @@ export default function App() {
 
   const [mode, setMode] = useState('upload');
   const [file, setFile] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null);
+  const [videoProgress, setVideoProgress] = useState(null);
+  const [isVideoRun, setIsVideoRun] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [question, setQuestion] = useState('');
   const [choices, setChoices] = useState([]);
@@ -89,7 +97,7 @@ export default function App() {
         const data = await fetchHealth();
         if (!cancelled) setHealth(data);
       } catch {
-        if (!cancelled) setHealth({ status: 'error', error: 'Cannot reach the backend.' });
+        if (!cancelled) setHealth({ status: 'error', error: 'The analysis service could not be reached.' });
       }
     }
     check();
@@ -141,9 +149,22 @@ export default function App() {
     [previewUrl],
   );
 
+  const handleVideoFile = useCallback((newFile) => {
+    setVideoFile(newFile);
+    setVideoUrl((old) => {
+      if (old) URL.revokeObjectURL(old);
+      return URL.createObjectURL(newFile);
+    });
+    setStatus('idle');
+    setError(null);
+    setResult(null);
+    setCurrentResultId(null);
+  }, []);
+
   // -- analysis ---------------------------------------------------------------
   const handleAnalyze = useCallback(async () => {
-    if (!file) return;
+    const video = mode === 'video';
+    if (video ? !videoFile : !file) return;
     const runId = (runIdRef.current += 1);
     const isCurrent = () => mountedRef.current && runIdRef.current === runId;
 
@@ -151,11 +172,15 @@ export default function App() {
     setError(null);
     setActiveStage(null);
     setDoneStages([]);
+    setIsVideoRun(video);
+    setVideoProgress(null);
 
     let jobId;
     try {
-      const thumbPromise = makeThumbnail(file);
-      const res = await startAnalysis({ file, question, choices });
+      const thumbPromise = video ? Promise.resolve(null) : makeThumbnail(file);
+      const res = video
+        ? await startVideoAnalysis({ file: videoFile, question })
+        : await startAnalysis({ file, question, choices });
       jobId = res.job_id;
       if (!isCurrent()) return;
       setCurrentResultId(jobId);
@@ -167,13 +192,16 @@ export default function App() {
         if (!isCurrent()) return;
         setActiveStage(data.stage);
         setDoneStages(data.done_stages || []);
+        if (data.kind === 'video') {
+          setVideoProgress({ scan: data.scan_progress, moments: data.moments || [], current: data.current });
+        }
 
         if (data.status === 'done') {
           setResult(data.result);
           setStatus('done');
           const when = Date.now();
           setAnalyzedAt(when);
-          const thumbnail = await thumbPromise;
+          const thumbnail = video ? data.result.moments?.find((m) => m.thumbnail)?.thumbnail : await thumbPromise;
           if (!isCurrent()) return;
           setHistory((prev) => [
             { id: jobId, thumbnail, result: data.result, analyzedAt: when, summary: summarize(data.result) },
@@ -183,7 +211,7 @@ export default function App() {
         }
         if (data.status === 'error') {
           setStatus('error');
-          setError(data.error || 'Analysis failed for an unknown reason.');
+          setError(data.error || 'The analysis failed for an unknown reason.');
           return;
         }
         await sleep(POLL_INTERVAL_MS);
@@ -191,9 +219,9 @@ export default function App() {
     } catch (err) {
       if (!isCurrent()) return;
       setStatus('error');
-      setError(err.message || 'Could not reach the backend.');
+      setError(err.message || 'The analysis service could not be reached. Please try again.');
     }
-  }, [file, question, choices]);
+  }, [mode, file, videoFile, question, choices]);
 
   const handleSelectHistory = useCallback(
     (id) => {
@@ -219,6 +247,8 @@ export default function App() {
             setMode={setMode}
             previewUrl={previewUrl}
             onFile={handleFile}
+            videoUrl={videoUrl}
+            onVideoFile={handleVideoFile}
             question={question}
             setQuestion={setQuestion}
             choices={choices}
@@ -227,7 +257,7 @@ export default function App() {
             status={status}
             activeStage={activeStage}
             doneStages={doneStages}
-            hasFile={Boolean(file)}
+            hasFile={Boolean(mode === 'video' ? videoFile : file)}
           />
           <HistoryStrip items={history} activeId={currentResultId} onSelect={handleSelectHistory} />
         </div>
@@ -241,13 +271,15 @@ export default function App() {
             result={result}
             analyzedAt={analyzedAt}
             onRetry={handleAnalyze}
+            isVideo={isVideoRun}
+            videoProgress={videoProgress}
           />
         </div>
       </main>
 
       <footer className="site-footer">
-        <span>Explainable Visual Commonsense Reasoning for Social Interactions — Phase I</span>
-        <span>SmolVLM · ConceptNet · OpenCV</span>
+        <span>Explainable Visual Commonsense Reasoning for Social Interactions</span>
+        <span>Department of Computer Science and Engineering, SSN College of Engineering</span>
       </footer>
     </div>
   );

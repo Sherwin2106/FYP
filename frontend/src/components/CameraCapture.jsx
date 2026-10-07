@@ -37,7 +37,7 @@ export default function CameraCapture({ onFile, disabled }) {
         if (cancelled) return;
         const message =
           err.name === 'NotAllowedError'
-            ? 'Camera access was denied. Allow it in your browser settings, or use the Upload tab instead.'
+            ? 'Camera access was denied. Allow camera access in your browser settings, or upload an image instead.'
             : err.name === 'NotFoundError'
               ? 'No camera was found on this device.'
               : 'Could not access the camera.';
@@ -100,7 +100,7 @@ export default function CameraCapture({ onFile, disabled }) {
             {capturedUrl && <img src={capturedUrl} alt="Captured frame" />}
             {ready && !capturedUrl && (
               <span className="camera-badge">
-                <span className="rec-dot" /> live
+                <span className="rec-dot" /> Live
               </span>
             )}
           </>
@@ -110,12 +110,12 @@ export default function CameraCapture({ onFile, disabled }) {
       {!error && (
         <div className="camera-actions">
           {capturedUrl ? (
-            <button type="button" className="btn btn-ghost btn-sm" onClick={retake} disabled={disabled}>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={retake} disabled={disabled}>
               Retake
             </button>
           ) : (
             <button type="button" className="btn btn-primary btn-sm" onClick={capture} disabled={disabled || !ready}>
-              Capture frame
+              Capture photo
             </button>
           )}
         </div>

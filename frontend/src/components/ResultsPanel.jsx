@@ -1,65 +1,74 @@
+import { useEffect, useState } from 'react';
 import { EmptyState, ErrorState, WorkingState } from './StatePanels';
-import TaskCard from './TaskCard';
-import ExplanationBlock from './ExplanationBlock';
-import CommonsensePanel from './CommonsensePanel';
-import QAPanel from './QAPanel';
-import VisualConceptsPanel from './VisualConceptsPanel';
-import TimingsFooter from './TimingsFooter';
-import RawJsonViewer from './RawJsonViewer';
-import { PeopleIcon } from './Icons';
-import { formatTime } from '../lib/format';
+import ImageResults from './ImageResults';
+import VideoResults, { MomentStrip } from './VideoResults';
+import ProgressStepper from './ProgressStepper';
 
-export default function ResultsPanel({ status, activeStage, doneStages, error, result, onRetry, analyzedAt }) {
+function VideoWorkingState({ progress, doneStages, activeStage }) {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const moments = progress?.moments || [];
+  const done = moments.filter((m) => m.status === 'done' || m.status === 'error').length;
+  const scanning = moments.length === 0;
+
+  return (
+    <div className="card card-body video-working">
+      <p className="state-title">Analyzing the video</p>
+      <p className="muted num">Elapsed time: {elapsed} s</p>
+      {scanning ? (
+        <div className="scan">
+          <p>Selecting key moments…</p>
+          <div className="confidence-track">
+            <div className="confidence-fill" style={{ width: `${Math.round((progress?.scan || 0) * 100)}%` }} />
+          </div>
+        </div>
+      ) : (
+        <>
+          <p className="video-working-count num">
+            Moment {Math.min(done + 1, moments.length)} of {moments.length}
+          </p>
+          <MomentStrip moments={moments} current={progress.current} />
+          <div className="working-stepper" style={{ alignSelf: 'center' }}>
+            <ProgressStepper doneStages={doneStages} activeStage={activeStage} />
+          </div>
+        </>
+      )}
+      <p className="state-sub" style={{ alignSelf: 'center' }}>
+        Each moment takes about half a minute. Results appear when all moments are done.
+      </p>
+    </div>
+  );
+}
+
+export default function ResultsPanel({
+  status,
+  activeStage,
+  doneStages,
+  error,
+  result,
+  onRetry,
+  analyzedAt,
+  isVideo,
+  videoProgress,
+}) {
   if (status === 'error') {
     return <ErrorState message={error} onRetry={onRetry} />;
   }
   if (status === 'queued' || status === 'running') {
-    return <WorkingState doneStages={doneStages} activeStage={activeStage} />;
+    return isVideo ? (
+      <VideoWorkingState progress={videoProgress} doneStages={doneStages} activeStage={activeStage} />
+    ) : (
+      <WorkingState doneStages={doneStages} activeStage={activeStage} />
+    );
   }
   if (status !== 'done' || !result) {
     return <EmptyState />;
   }
-
-  const { prediction, visual, commonsense, frame, timings_s: timings, model_id: modelId } = result;
-  const quality = frame?.quality;
-  const enhanced = quality?.enhancements?.length > 0;
-
-  return (
-    <div className="results-dashboard">
-      <div className="card results-summary-bar">
-        <div className="results-summary-left">
-          <span className="chip">
-            <PeopleIcon style={{ width: 13, height: 13 }} />
-            {prediction.people_count} {prediction.people_count === 1 ? 'person' : 'people'}
-          </span>
-          <span className="muted mono" style={{ fontSize: 11.5 }}>
-            analyzed {formatTime(analyzedAt)}
-          </span>
-          {quality?.is_blurry && (
-            <span className="chip" style={{ background: 'var(--warning)', color: 'var(--card)' }}>
-              blurry input — predictions may be less reliable
-            </span>
-          )}
-          {enhanced && (
-            <span className="chip" title={quality.enhancements.join(', ')}>
-              low-light image was auto-enhanced
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className="task-grid">
-        <TaskCard title="Activity" task={prediction.activity} />
-        <TaskCard title="Relationship" task={prediction.relationship} />
-        <TaskCard title="Intention" task={prediction.intention} />
-      </div>
-
-      <ExplanationBlock explanation={prediction.explanation} />
-      <QAPanel prediction={prediction} />
-      <CommonsensePanel evidence={prediction.evidence} commonsense={commonsense} />
-      <VisualConceptsPanel visual={visual} />
-      <TimingsFooter timings={timings} modelId={modelId} />
-      <RawJsonViewer data={result} />
-    </div>
-  );
+  if (result.kind === 'video') {
+    return <VideoResults key={analyzedAt} result={result} analyzedAt={analyzedAt} />;
+  }
+  return <ImageResults result={result} analyzedAt={analyzedAt} />;
 }

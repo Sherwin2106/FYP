@@ -3,7 +3,7 @@ import { ChevronIcon, CloseIcon } from './Icons';
 
 const MAX_CHOICES = 6;
 
-export default function QuestionForm({ question, setQuestion, choices, setChoices, disabled }) {
+export default function QuestionForm({ question, setQuestion, choices, setChoices, disabled, allowChoices = true }) {
   const [open, setOpen] = useState(false);
 
   function updateChoice(i, value) {
@@ -24,7 +24,7 @@ export default function QuestionForm({ question, setQuestion, choices, setChoice
     <div className="question-form">
       <button type="button" className="question-toggle" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
         <ChevronIcon />
-        Ask a question about the scene <span className="muted">(optional)</span>
+        Ask a question about the image <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
       </button>
       {open && (
         <div className="question-body">
@@ -34,14 +34,17 @@ export default function QuestionForm({ question, setQuestion, choices, setChoice
           <textarea
             id="question-input"
             className="text-input"
-            placeholder="e.g. Why are they shaking hands?"
+            placeholder="For example: Why are they shaking hands?"
             value={question}
             disabled={disabled}
             onChange={(e) => setQuestion(e.target.value)}
           />
 
+          {allowChoices && (
           <div style={{ marginTop: 14 }}>
-            <label className="field-label">Multiple-choice answers (optional — leave empty for a free-form answer)</label>
+            <label className="field-label">
+              Answer options <span className="field-hint">(optional; leave empty for a written answer)</span>
+            </label>
             <div className="choice-list">
               {choices.map((c, i) => (
                 <div className="choice-row" key={i}>
@@ -67,10 +70,11 @@ export default function QuestionForm({ question, setQuestion, choices, setChoice
             </div>
             {choices.length < MAX_CHOICES && (
               <button type="button" className="add-choice" onClick={addChoice} disabled={disabled}>
-                + add option
+                + Add option
               </button>
             )}
           </div>
+          )}
         </div>
       )}
     </div>

@@ -20,7 +20,7 @@ vlm:                             # Module 2 - Small Vision-Language Model
   dtype: auto
   local_files_only: false
   image_longest_edge: 1152
-  max_new_tokens_description: 160
+  max_new_tokens_description: 220
   max_new_tokens_short: 32
   max_new_tokens_explanation: 120
   repetition_penalty: 1.1

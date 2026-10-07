@@ -15,7 +15,7 @@ async function readError(response) {
 export async function fetchHealth() {
   const res = await fetch('/api/health');
   if (!res.ok) {
-    throw new Error((await readError(res)) || `Health check failed (${res.status})`);
+    throw new Error((await readError(res)) || `The analysis service is unavailable (${res.status})`);
   }
   return res.json();
 }
@@ -33,7 +33,23 @@ export async function startAnalysis({ file, question, choices }) {
 
   const res = await fetch('/api/analyze', { method: 'POST', body: form });
   if (!res.ok) {
-    throw new Error((await readError(res)) || `Upload failed (${res.status})`);
+    throw new Error((await readError(res)) || `The image could not be uploaded (${res.status})`);
+  }
+  return res.json();
+}
+
+/**
+ * Upload a video; the backend picks up to `maxMoments` key moments and analyses each.
+ * @returns {Promise<{job_id: string}>}
+ */
+export async function startVideoAnalysis({ file, question, maxMoments = 7 }) {
+  const form = new FormData();
+  form.append('video', file, file.name || 'video.mp4');
+  if (question && question.trim()) form.append('question', question.trim());
+  form.append('max_moments', String(maxMoments));
+  const res = await fetch('/api/analyze-video', { method: 'POST', body: form });
+  if (!res.ok) {
+    throw new Error((await readError(res)) || `The video could not be uploaded (${res.status})`);
   }
   return res.json();
 }
@@ -41,7 +57,7 @@ export async function startAnalysis({ file, question, choices }) {
 export async function pollJob(jobId, { signal } = {}) {
   const res = await fetch(`/api/jobs/${jobId}`, { signal });
   if (!res.ok) {
-    throw new Error((await readError(res)) || `Could not reach job ${jobId} (${res.status})`);
+    throw new Error((await readError(res)) || `Could not retrieve the analysis status (${res.status})`);
   }
   return res.json();
 }
@@ -49,8 +65,8 @@ export async function pollJob(jobId, { signal } = {}) {
 export const STAGE_ORDER = ['preprocess', 'vlm', 'conceptnet', 'reasoning'];
 
 export const STAGE_META = {
-  preprocess: { short: 'Preprocessing', full: 'Module 1 — Input & preprocessing (OpenCV)' },
-  vlm: { short: 'SmolVLM reasoning', full: 'Module 2 — Vision-language understanding & draft reasoning' },
-  conceptnet: { short: 'ConceptNet lookup', full: 'Module 3 — Commonsense knowledge enrichment' },
-  reasoning: { short: 'Fusing prediction', full: 'Module 4 — Social interaction reasoning' },
+  preprocess: { short: 'Image preprocessing', full: 'Image preprocessing' },
+  vlm: { short: 'Visual understanding', full: 'Visual understanding' },
+  conceptnet: { short: 'Commonsense knowledge retrieval', full: 'Commonsense knowledge retrieval' },
+  reasoning: { short: 'Interaction reasoning', full: 'Interaction reasoning' },
 };

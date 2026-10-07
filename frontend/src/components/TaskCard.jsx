@@ -9,29 +9,37 @@ export default function TaskCard({ title, task }) {
 
   return (
     <article className="card task-card">
-      <p className="eyebrow">{title}</p>
+      <p className="label">{title}</p>
       <h3 className="task-card-label">{task.label}</h3>
 
-      <div className="confidence-track">
-        <div
-          className={`confidence-fill ${TIER_CLASS[tier]}`}
-          style={{ width: `${Math.max(3, Math.round(task.confidence * 100))}%` }}
-        />
+      <div className="confidence">
+        <div className="confidence-head">
+          <span>Confidence</span>
+          <strong className="num">{pct(task.confidence)}</strong>
+        </div>
+        <div className="confidence-track">
+          <div
+            className={`confidence-fill ${TIER_CLASS[tier]}`}
+            style={{ width: `${Math.max(3, Math.round(task.confidence * 100))}%` }}
+          />
+        </div>
+        {task.ambiguous && <p className="confidence-note">Close call: the next option scored similarly.</p>}
       </div>
-      <p className="confidence-readout">
-        <span className="mono">{pct(task.confidence)}</span> confidence
-        {task.ambiguous && <span className="ambiguous-flag">· ambiguous</span>}
-      </p>
 
       {alternatives.length > 0 && (
-        <ul className="task-card-alts">
-          {alternatives.map((alt) => (
-            <li key={alt.label_id}>
-              <span>{alt.label}</span>
-              <span className="mono">{pct(alt.probability)}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="alternatives">
+          <p className="label" style={{ marginBottom: 6 }}>
+            Other possibilities
+          </p>
+          <ul>
+            {alternatives.map((alt) => (
+              <li key={alt.label_id}>
+                <span>{alt.label}</span>
+                <span className="num">{pct(alt.probability)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </article>
   );

@@ -1,7 +1,6 @@
 /* ---------------------------------------------------------------------------
    Palette — fixed values from the project's design reference.
-   A few extra tones (danger / shadow / borders) are derived from the same
-   warm-brown family so anything not in the reference still belongs with it.
+   (danger / borders / shadows are derived from the same warm-brown family)
 ----------------------------------------------------------------------------*/
 :root {
   --bg: #f5efe6;
@@ -16,18 +15,15 @@
   --warning: #c9a66b;
   --danger: #ad6049;
 
-  --border: rgba(92, 70, 54, 0.16);
-  --border-strong: rgba(92, 70, 54, 0.32);
-  --shadow-1: 0 1px 0 rgba(51, 40, 32, 0.05);
-  --shadow-card: 0 1px 2px rgba(51, 40, 32, 0.04), 0 10px 24px -18px rgba(51, 40, 32, 0.35);
+  --border: rgba(92, 70, 54, 0.14);
+  --border-strong: rgba(92, 70, 54, 0.28);
+  --shadow-card: 0 1px 2px rgba(51, 40, 32, 0.05);
 
-  --radius-xs: 3px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
 
-  --font-display: 'Fraunces', 'Iowan Old Style', ui-serif, serif;
-  --font-body: 'Karla', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   color-scheme: light;
 }
@@ -46,37 +42,22 @@ body {
   margin: 0;
   background-color: var(--bg);
   color: var(--text);
-  font-family: var(--font-body);
-  font-size: 15.5px;
-  line-height: 1.5;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  position: relative;
   min-height: 100vh;
-}
-
-/* A faint paper grain over the whole page — subtle enough to read as texture,
-   not pattern, and the thing that keeps a flat warm palette from looking like
-   a plain CSS-variables demo. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 2147483647;
-  pointer-events: none;
-  opacity: 0.035;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   color: var(--accent-dark);
   margin: 0;
-  letter-spacing: -0.01em;
+  font-weight: 600;
 }
 
 p {
@@ -87,84 +68,71 @@ button {
   font-family: inherit;
 }
 
-a {
-  color: var(--accent-dark);
-}
-
 ::selection {
   background: var(--highlight);
   color: var(--accent-dark);
 }
 
 /* ---------------------------------------------------------------------------
-   Small reusable primitives
+   Primitives
 ----------------------------------------------------------------------------*/
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
+.label {
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-secondary);
   margin: 0 0 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
-.eyebrow::before {
-  content: '';
-  width: 12px;
-  height: 1.5px;
-  background: var(--primary);
-  display: inline-block;
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--accent-dark);
+  margin: 0 0 12px;
 }
 
-.mono {
-  font-family: var(--font-mono);
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--bg-secondary);
-  color: var(--text);
-  font-size: 12.5px;
-  line-height: 1.4;
-  white-space: nowrap;
+.num {
+  font-variant-numeric: tabular-nums;
 }
 
 .muted {
   color: var(--text-secondary);
 }
 
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tag-warn {
+  background: rgba(201, 166, 107, 0.22);
+  color: #6e5326;
+}
+
 .btn {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 14.5px;
+  font-weight: 600;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  padding: 11px 20px;
+  padding: 10px 20px;
   cursor: pointer;
-  transition: transform 0.12s ease, background-color 0.12s ease, border-color 0.12s ease, opacity 0.12s ease;
+  transition: background-color 0.12s ease, border-color 0.12s ease, opacity 0.12s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
-.btn:active:not(:disabled) {
-  transform: translateY(1px);
-}
-
 .btn:disabled {
   cursor: not-allowed;
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
 .btn-primary {
@@ -176,43 +144,24 @@ a {
   background: #4a392d;
 }
 
-.btn-ghost {
-  background: transparent;
+.btn-secondary {
+  background: var(--card);
   border-color: var(--border-strong);
   color: var(--accent-dark);
 }
 
-.btn-ghost:hover:not(:disabled) {
+.btn-secondary:hover:not(:disabled) {
   background: var(--bg-secondary);
 }
 
 .btn-sm {
-  padding: 7px 12px;
-  font-size: 11px;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
+  padding: 6px 14px;
+  font-size: 13.5px;
 }
 
 .scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 99px;
 }
 
 @keyframes spin {
@@ -221,13 +170,11 @@ a {
   }
 }
 
-@keyframes fade-up {
+@keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }

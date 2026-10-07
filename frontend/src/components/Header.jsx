@@ -1,28 +1,18 @@
-import { shortModelName } from '../lib/format';
-
 function statusText(health) {
-  if (!health) return 'connecting…';
-  if (health.status === 'loading') return 'loading model…';
-  if (health.status === 'error') return health.error ? 'backend error' : 'backend unavailable';
-  if (health.status === 'ready') {
-    const cn = health.conceptnet_available ? health.conceptnet_backend : 'offline';
-    const lora = health.adapter ? ' + LoRA (VCR)' : '';
-    return `${shortModelName(health.model_id)}${lora} · ${health.device} · conceptnet: ${cn}`;
-  }
-  return 'connecting…';
+  if (!health || health.status === 'loading') return 'Starting up…';
+  if (health.status === 'ready') return 'System ready';
+  return 'Service unavailable';
 }
 
 export default function Header({ health }) {
-  const status = health?.status || 'loading';
+  const status = health?.status === 'ready' ? 'ready' : !health || health.status === 'loading' ? 'loading' : 'error';
   return (
     <header className="site-header">
       <div>
-        <h1 className="wordmark-main">
-          Social<em>VCR</em>
-        </h1>
-        <span className="wordmark-sub">Explainable Visual Commonsense Reasoning — Phase I</span>
+        <h1 className="site-title">Explainable Visual Commonsense Reasoning</h1>
+        <p className="site-subtitle">Social interaction analysis — activity, relationship and intention</p>
       </div>
-      <div className={`status-pill status-${status}`} title={health?.error || ''}>
+      <div className={`status status-${status}`} role="status">
         <span className="status-dot" />
         {statusText(health)}
       </div>
